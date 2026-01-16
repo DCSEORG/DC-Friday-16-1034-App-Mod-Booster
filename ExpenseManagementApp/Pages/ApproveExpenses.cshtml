@@ -1,0 +1,174 @@
+@page
+@model ExpenseManagementApp.Pages.ApproveExpensesModel
+@{
+    ViewData["Title"] = "Approve Expenses";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Approve Expenses</h1>
+    <p class="page-description">Review and approve pending expense claims</p>
+</div>
+
+@if (Model.HasError)
+{
+    <div class="error-banner">
+        <div class="error-banner-icon">⚠️</div>
+        <div class="error-banner-content">
+            <div class="error-banner-title">Error</div>
+            <div class="error-banner-message">@Model.ErrorMessage</div>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Pending Expenses for Review</h2>
+    </div>
+
+    @if (Model.PendingExpenses.Any())
+    {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.PendingExpenses)
+                    {
+                        <tr>
+                            <td><strong>@expense.ExpenseId</strong></td>
+                            <td>@expense.UserName</td>
+                            <td>@expense.ExpenseDate.ToString("dd/MM/yyyy")</td>
+                            <td>@expense.CategoryName</td>
+                            <td><strong style="color: var(--primary-color);">£@expense.AmountDecimal.ToString("N2")</strong></td>
+                            <td>@(expense.Description ?? "-")</td>
+                            <td>
+                                @if (expense.SubmittedAt.HasValue)
+                                {
+                                    <small style="color: var(--text-secondary);">
+                                        @expense.SubmittedAt.Value.ToString("dd/MM/yyyy HH:mm")
+                                    </small>
+                                }
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button onclick="approveExpense(@expense.ExpenseId, 2)" 
+                                            class="btn btn-success btn-sm">
+                                        ✅ Approve
+                                    </button>
+                                    <button onclick="rejectExpense(@expense.ExpenseId, 2)" 
+                                            class="btn btn-danger btn-sm">
+                                        ❌ Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Pending Count</div>
+                    <div class="stat-value">@Model.PendingExpenses.Count</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Pending Amount</div>
+                    <div class="stat-value">£@Model.PendingExpenses.Sum(e => e.AmountDecimal).ToString("N2")</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Oldest Submission</div>
+                    <div class="stat-value" style="font-size: 1.25rem;">
+                        @if (Model.PendingExpenses.Any() && Model.PendingExpenses.Min(e => e.SubmittedAt).HasValue)
+                        {
+                            @Model.PendingExpenses.Min(e => e.SubmittedAt)!.Value.ToString("dd/MM/yyyy")
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average Amount</div>
+                    <div class="stat-value" style="font-size: 1.25rem;">
+                        £@Model.PendingExpenses.Average(e => e.AmountDecimal).ToString("N2")
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; padding: 3rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+            <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">All Caught Up!</h3>
+            <p style="color: var(--text-secondary);">There are no pending expenses to review at this time.</p>
+        </div>
+    }
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Recent Reviews</h2>
+    </div>
+
+    @if (Model.RecentlyReviewedExpenses.Any())
+    {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Reviewed By</th>
+                        <th>Reviewed At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.RecentlyReviewedExpenses.Take(10))
+                    {
+                        <tr>
+                            <td>@expense.ExpenseId</td>
+                            <td>@expense.UserName</td>
+                            <td>@expense.CategoryName</td>
+                            <td>£@expense.AmountDecimal.ToString("N2")</td>
+                            <td>
+                                <span class="badge badge-@expense.StatusName.ToLower()">
+                                    @expense.StatusName
+                                </span>
+                            </td>
+                            <td>@(expense.ReviewerName ?? "-")</td>
+                            <td>
+                                @if (expense.ReviewedAt.HasValue)
+                                {
+                                    <small>@expense.ReviewedAt.Value.ToString("dd/MM/yyyy HH:mm")</small>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-center" style="padding: 2rem; color: var(--text-secondary);">
+            No recently reviewed expenses.
+        </p>
+    }
+</div>

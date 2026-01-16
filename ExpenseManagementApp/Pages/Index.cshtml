@@ -1,0 +1,115 @@
+@page
+@model ExpenseManagementApp.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Expense Management System</h1>
+    <p class="page-description">Manage your expenses efficiently with our modern platform</p>
+</div>
+
+<div class="grid grid-cols-2">
+    <a href="/AddExpense" class="feature-card">
+        <div class="feature-card-icon">💰</div>
+        <h2 class="feature-card-title">Add Expense</h2>
+        <p class="feature-card-description">Create and submit new expense claims</p>
+    </a>
+
+    <a href="/ListExpenses" class="feature-card" style="background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);">
+        <div class="feature-card-icon">📋</div>
+        <h2 class="feature-card-title">My Expenses</h2>
+        <p class="feature-card-description">View and manage all your expenses</p>
+    </a>
+
+    <a href="/ApproveExpenses" class="feature-card" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);">
+        <div class="feature-card-icon">✅</div>
+        <h2 class="feature-card-title">Approve Expenses</h2>
+        <p class="feature-card-description">Review and approve pending expenses</p>
+    </a>
+
+    <a href="/Chat" class="feature-card" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+        <div class="feature-card-icon">💬</div>
+        <h2 class="feature-card-title">AI Assistant</h2>
+        <p class="feature-card-description">Chat with AI to manage expenses</p>
+    </a>
+</div>
+
+@if (Model.HasError)
+{
+    <div class="card mt-4">
+        <div class="error-banner">
+            <div class="error-banner-icon">⚠️</div>
+            <div class="error-banner-content">
+                <div class="error-banner-title">Database Connection Notice</div>
+                <div class="error-banner-message">@Model.ErrorMessage</div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h2 class="card-title">Quick Stats</h2>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value">@Model.Expenses.Count</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Pending</div>
+            <div class="stat-value">@Model.Expenses.Count(e => e.StatusName == "Submitted")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Approved</div>
+            <div class="stat-value">@Model.Expenses.Count(e => e.StatusName == "Approved")</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Amount</div>
+            <div class="stat-value">£@Model.Expenses.Sum(e => e.AmountDecimal).ToString("N2")</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Recent Expenses</h2>
+    </div>
+    @if (Model.Expenses.Any())
+    {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.Expenses.Take(5))
+                    {
+                        <tr>
+                            <td>@expense.ExpenseDate.ToString("dd/MM/yyyy")</td>
+                            <td>@expense.CategoryName</td>
+                            <td>£@expense.AmountDecimal.ToString("N2")</td>
+                            <td>
+                                <span class="badge badge-@expense.StatusName.ToLower()">
+                                    @expense.StatusName
+                                </span>
+                            </td>
+                            <td>@(expense.Description ?? "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-center" style="padding: 2rem; color: var(--text-secondary);">No expenses found. Create your first expense to get started!</p>
+    }
+</div>

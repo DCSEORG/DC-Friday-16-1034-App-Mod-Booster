@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Expense Management</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">💰 Expense Manager</a>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="/" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")">Home</a></li>
+                        <li><a href="/AddExpense" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/AddExpense" ? "active" : "")">Add Expense</a></li>
+                        <li><a href="/ListExpenses" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/ListExpenses" ? "active" : "")">My Expenses</a></li>
+                        <li><a href="/ApproveExpenses" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/ApproveExpenses" ? "active" : "")">Approve</a></li>
+                        <li><a href="/Chat" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Chat" ? "active" : "")">AI Chat</a></li>
+                        <li><a href="/swagger" target="_blank">API Docs</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer style="background-color: var(--bg-primary); border-top: 1px solid var(--border-color); margin-top: 4rem; padding: 2rem 0;">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 0.875rem;">
+                <div>
+                    © @DateTime.Now.Year Expense Management System - Built with ASP.NET Core 8
+                </div>
+                <div>
+                    <a href="/swagger" style="color: var(--primary-color); text-decoration: none;">API Documentation</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
