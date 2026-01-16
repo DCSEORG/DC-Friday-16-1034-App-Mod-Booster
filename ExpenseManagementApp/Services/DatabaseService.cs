@@ -23,7 +23,7 @@ public class DatabaseService
     {
         if (_useDummyData)
         {
-            throw new InvalidOperationException("Database not configured. Using dummy data. [DatabaseService.cs:23]");
+            throw new InvalidOperationException("Database not configured. Using dummy data. [DatabaseService.cs:26]");
         }
         return new SqlConnection(_connectionString);
     }
@@ -59,7 +59,7 @@ public class DatabaseService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching expenses from database [DatabaseService.cs:58]");
+            _logger.LogError(ex, "Error fetching expenses from database [DatabaseService.cs:62]");
             return GetDummyExpenses();
         }
     }
@@ -89,7 +89,7 @@ public class DatabaseService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching expense by ID from database [DatabaseService.cs:85]");
+            _logger.LogError(ex, "Error fetching expense by ID from database [DatabaseService.cs:92]");
             return GetDummyExpenses().FirstOrDefault(e => e.ExpenseId == expenseId);
         }
     }
@@ -118,8 +118,8 @@ public class DatabaseService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating expense in database [DatabaseService.cs:116]");
-            throw new InvalidOperationException($"Failed to create expense. [DatabaseService.cs:117] Error: {ex.Message}", ex);
+            _logger.LogError(ex, "Error creating expense in database [DatabaseService.cs:121]");
+            throw new InvalidOperationException($"Failed to create expense. [DatabaseService.cs:122] Error: {ex.Message}", ex);
         }
     }
 
