@@ -154,23 +154,20 @@ public class ChatService
             var completion = await chatClient.CompleteChatAsync(messages, chatOptions);
             var responseMessage = completion.Value.Content[0].Text;
             
-            if (completion.Value.FinishReason == ChatFinishReason.ToolCalls)
+            if (completion.Value.FinishReason == ChatFinishReason.ToolCalls && completion.Value.ToolCalls.Count > 0)
             {
-                var toolCall = completion.Value.ToolCalls[0] as ChatToolCall;
-                if (toolCall != null)
+                var toolCall = completion.Value.ToolCalls[0];
+                var functionName = toolCall.FunctionName;
+                var functionArgs = toolCall.FunctionArguments;
+                
+                var result = await ExecuteFunctionAsync(functionName, functionArgs, request.UserId);
+                
+                return new ChatResponse
                 {
-                    var functionName = toolCall.FunctionName;
-                    var functionArgs = toolCall.FunctionArguments;
-                    
-                    var result = await ExecuteFunctionAsync(functionName, functionArgs, request.UserId);
-                    
-                    return new ChatResponse
-                    {
-                        Message = $"Executed {functionName} successfully.",
-                        FunctionCalled = functionName,
-                        FunctionResult = result
-                    };
-                }
+                    Message = $"Executed {functionName} successfully.",
+                    FunctionCalled = functionName,
+                    FunctionResult = result
+                };
             }
 
             return new ChatResponse
