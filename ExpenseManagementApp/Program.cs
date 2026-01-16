@@ -167,7 +167,7 @@ apiGroup.MapPost("/expenses/{id}/reject", async (
     }
     catch (Exception ex)
     {
-        return Results.Problem(detail: $"{ex.Message} [Program.cs:173]", statusCode: 500);
+        return Results.Problem(detail: $"{ex.Message} [Program.cs:170]", statusCode: 500);
     }
 })
 .WithName("RejectExpense");
@@ -184,7 +184,7 @@ apiGroup.MapDelete("/expenses/{id}", async (
     }
     catch (Exception ex)
     {
-        return Results.Problem(detail: $"{ex.Message} [Program.cs:193]", statusCode: 500);
+        return Results.Problem(detail: $"{ex.Message} [Program.cs:187]", statusCode: 500);
     }
 })
 .WithName("DeleteExpense");
@@ -199,7 +199,7 @@ apiGroup.MapGet("/categories", async ([FromServices] DatabaseService db) =>
     }
     catch (Exception ex)
     {
-        return Results.Problem(detail: $"{ex.Message} [Program.cs:210]", statusCode: 500);
+        return Results.Problem(detail: $"{ex.Message} [Program.cs:202]", statusCode: 500);
     }
 })
 .WithName("GetCategories");
@@ -214,7 +214,7 @@ apiGroup.MapGet("/statuses", async ([FromServices] DatabaseService db) =>
     }
     catch (Exception ex)
     {
-        return Results.Problem(detail: $"{ex.Message} [Program.cs:227]", statusCode: 500);
+        return Results.Problem(detail: $"{ex.Message} [Program.cs:217]", statusCode: 500);
     }
 })
 .WithName("GetStatuses");
@@ -231,7 +231,7 @@ apiGroup.MapPost("/chat", async (
     }
     catch (Exception ex)
     {
-        return Results.Problem(detail: $"{ex.Message} [Program.cs:245]", statusCode: 500);
+        return Results.Problem(detail: $"{ex.Message} [Program.cs:234]", statusCode: 500);
     }
 })
 .WithName("Chat");
