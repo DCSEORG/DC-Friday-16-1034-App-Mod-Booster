@@ -1,0 +1,86 @@
+@page
+@model ExpenseManagementApp.Pages.AddExpenseModel
+@{
+    ViewData["Title"] = "Add Expense";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Add New Expense</h1>
+    <p class="page-description">Submit a new expense claim</p>
+</div>
+
+@if (Model.HasError)
+{
+    <div class="error-banner">
+        <div class="error-banner-icon">⚠️</div>
+        <div class="error-banner-content">
+            <div class="error-banner-title">Error</div>
+            <div class="error-banner-message">@Model.ErrorMessage</div>
+        </div>
+    </div>
+}
+
+@if (Model.SuccessMessage != null)
+{
+    <div class="card" style="background-color: #d1fae5; border-left: 4px solid var(--success-color);">
+        <p style="color: #065f46; margin: 0;">✅ @Model.SuccessMessage</p>
+    </div>
+}
+
+<div class="card">
+    <form method="post" onsubmit="return validateExpenseForm()">
+        <div class="form-group">
+            <label class="form-label" for="CategoryId">Category *</label>
+            <select class="form-select" id="CategoryId" name="CategoryId" required>
+                <option value="">Select a category</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.CategoryId">@category.CategoryName</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="Amount">Amount (£) *</label>
+            <input type="number" class="form-input" id="Amount" name="Amount" 
+                   step="0.01" min="0.01" placeholder="0.00" required />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="ExpenseDate">Expense Date *</label>
+            <input type="date" class="form-input" id="ExpenseDate" name="ExpenseDate" 
+                   max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="Description">Description</label>
+            <textarea class="form-textarea" id="Description" name="Description" 
+                      placeholder="Enter expense details..." rows="4"></textarea>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                💾 Save as Draft
+            </button>
+            <button type="submit" name="submitForApproval" value="true" class="btn btn-success">
+                📤 Submit for Approval
+            </button>
+            <a href="/" class="btn btn-secondary">
+                ❌ Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Tips for Expense Submission</h2>
+    </div>
+    <ul style="color: var(--text-secondary); line-height: 1.8;">
+        <li>Select the appropriate category for your expense</li>
+        <li>Enter the exact amount in British Pounds (£)</li>
+        <li>Choose the date when the expense occurred</li>
+        <li>Provide a clear description of the expense</li>
+        <li>Save as draft to edit later, or submit for immediate approval</li>
+    </ul>
+</div>

@@ -1,0 +1,107 @@
+@page
+@model ExpenseManagementApp.Pages.ChatModel
+@{
+    ViewData["Title"] = "AI Chat Assistant";
+}
+
+<div class="page-header">
+    <h1 class="page-title">AI Chat Assistant</h1>
+    <p class="page-description">Chat with AI to manage your expenses</p>
+</div>
+
+@if (Model.HasError)
+{
+    <div class="error-banner">
+        <div class="error-banner-icon">⚠️</div>
+        <div class="error-banner-content">
+            <div class="error-banner-title">Configuration Notice</div>
+            <div class="error-banner-message">@Model.ErrorMessage</div>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be dynamically added here by JavaScript -->
+        </div>
+        
+        <div class="chat-input-container">
+            <form class="chat-input-form" id="chat-form">
+                <input 
+                    type="text" 
+                    class="form-input" 
+                    id="chat-input" 
+                    placeholder="Ask me anything about your expenses..."
+                    autocomplete="off"
+                    required
+                />
+                <button type="submit" class="btn btn-primary">
+                    📤 Send
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">What can I help you with?</h2>
+    </div>
+    <div class="grid grid-cols-2">
+        <div style="padding: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">📊 View Expenses</h3>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.75rem;">
+                Ask me to show your expenses, filter by status, or view specific details.
+            </p>
+            <div style="background-color: var(--bg-secondary); padding: 0.75rem; border-radius: var(--radius-sm); font-family: monospace; font-size: 0.875rem;">
+                "Show me my submitted expenses"
+            </div>
+        </div>
+
+        <div style="padding: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">➕ Create Expenses</h3>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.75rem;">
+                I can help you create new expense claims with all the details.
+            </p>
+            <div style="background-color: var(--bg-secondary); padding: 0.75rem; border-radius: var(--radius-sm); font-family: monospace; font-size: 0.875rem;">
+                "Create a £50 travel expense for today"
+            </div>
+        </div>
+
+        <div style="padding: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">📤 Submit Expenses</h3>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.75rem;">
+                Submit your draft expenses for manager approval.
+            </p>
+            <div style="background-color: var(--bg-secondary); padding: 0.75rem; border-radius: var(--radius-sm); font-family: monospace; font-size: 0.875rem;">
+                "Submit expense 3 for approval"
+            </div>
+        </div>
+
+        <div style="padding: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">✅ Approve/Reject</h3>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.75rem;">
+                If you're a manager, I can help approve or reject expenses.
+            </p>
+            <div style="background-color: var(--bg-secondary); padding: 0.75rem; border-radius: var(--radius-sm); font-family: monospace; font-size: 0.875rem;">
+                "Approve expense 5"
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Tips for Using the AI Assistant</h2>
+    </div>
+    <ul style="color: var(--text-secondary); line-height: 1.8;">
+        <li>Be specific about what you want to do (view, create, submit, approve, reject)</li>
+        <li>Use natural language - no need for special commands</li>
+        <li>Reference expense IDs when performing actions on specific expenses</li>
+        <li>For creating expenses, provide category, amount, and date</li>
+        <li>The AI will confirm actions before executing them</li>
+    </ul>
+</div>
+
+<script src="/js/site.js"></script>

@@ -1,0 +1,189 @@
+@page
+@model ExpenseManagementApp.Pages.ListExpensesModel
+@{
+    ViewData["Title"] = "My Expenses";
+}
+
+<div class="page-header">
+    <h1 class="page-title">My Expenses</h1>
+    <p class="page-description">View and manage all your expense claims</p>
+</div>
+
+@if (Model.HasError)
+{
+    <div class="error-banner">
+        <div class="error-banner-icon">⚠️</div>
+        <div class="error-banner-content">
+            <div class="error-banner-title">Error</div>
+            <div class="error-banner-message">@Model.ErrorMessage</div>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Filter Expenses</h2>
+    </div>
+    
+    <form method="get" class="filter-bar">
+        <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="filter-status" name="statusId">
+                <option value="">All Statuses</option>
+                @foreach (var status in Model.Statuses)
+                {
+                    <option value="@status.StatusId" selected="@(Model.StatusId == status.StatusId)">
+                        @status.StatusName
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="filter-category" name="categoryId">
+                <option value="">All Categories</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.CategoryId" selected="@(Model.CategoryId == category.CategoryId)">
+                        @category.CategoryName
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-input" id="filter-start-date" name="startDate" 
+                   value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-input" id="filter-end-date" name="endDate" 
+                   value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: flex-end; gap: 0.5rem;">
+            <button type="submit" class="btn btn-primary">
+                🔍 Apply Filters
+            </button>
+            <a href="/ListExpenses" class="btn btn-secondary">
+                ❌ Clear
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header flex justify-between items-center">
+        <h2 class="card-title">Expense List (@Model.Expenses.Count)</h2>
+        <a href="/AddExpense" class="btn btn-primary btn-sm">
+            ➕ Add Expense
+        </a>
+    </div>
+
+    @if (Model.Expenses.Any())
+    {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.Expenses)
+                    {
+                        <tr>
+                            <td>@expense.ExpenseId</td>
+                            <td>@expense.ExpenseDate.ToString("dd/MM/yyyy")</td>
+                            <td>@expense.CategoryName</td>
+                            <td><strong>£@expense.AmountDecimal.ToString("N2")</strong></td>
+                            <td>
+                                <span class="badge badge-@expense.StatusName.ToLower()">
+                                    @expense.StatusName
+                                </span>
+                            </td>
+                            <td>@(expense.Description ?? "-")</td>
+                            <td>
+                                @if (expense.StatusName == "Draft")
+                                {
+                                    <button onclick="submitExpense(@expense.ExpenseId)" 
+                                            class="btn btn-success btn-sm">
+                                        📤 Submit
+                                    </button>
+                                    <button onclick="deleteExpense(@expense.ExpenseId)" 
+                                            class="btn btn-danger btn-sm">
+                                        🗑️ Delete
+                                    </button>
+                                }
+                                else if (expense.StatusName == "Submitted")
+                                {
+                                    <span class="badge badge-submitted">Pending Review</span>
+                                }
+                                else if (expense.StatusName == "Approved")
+                                {
+                                    <span style="color: var(--success-color);">✅ Approved</span>
+                                    @if (expense.ReviewerName != null)
+                                    {
+                                        <br />
+                                        <small style="color: var(--text-secondary);">by @expense.ReviewerName</small>
+                                    }
+                                }
+                                else if (expense.StatusName == "Rejected")
+                                {
+                                    <span style="color: var(--danger-color);">❌ Rejected</span>
+                                    @if (expense.ReviewerName != null)
+                                    {
+                                        <br />
+                                        <small style="color: var(--text-secondary);">by @expense.ReviewerName</small>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-center" style="padding: 2rem; color: var(--text-secondary);">
+            No expenses found. Try adjusting your filters or <a href="/AddExpense" style="color: var(--primary-color);">add a new expense</a>.
+        </p>
+    }
+</div>
+
+@if (Model.Expenses.Any())
+{
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Summary</h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Expenses</div>
+                <div class="stat-value">@Model.Expenses.Count</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Amount</div>
+                <div class="stat-value">£@Model.Expenses.Sum(e => e.AmountDecimal).ToString("N2")</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Approved Amount</div>
+                <div class="stat-value">£@Model.Expenses.Where(e => e.StatusName == "Approved").Sum(e => e.AmountDecimal).ToString("N2")</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Amount</div>
+                <div class="stat-value">£@Model.Expenses.Where(e => e.StatusName == "Submitted").Sum(e => e.AmountDecimal).ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+}
